@@ -63,6 +63,50 @@ def InitSearchButton(): #검색 버튼
 def SearchButtonAction(): #검색 버튼 상호작용
     pass
 
+def InitGmailButton(): #지메일 버튼
+    TempFont = font.Font(g_Tk, size=11,family='Consolas')
+    SearchButton = Button(g_Tk,font=TempFont,text="G-mail",command=GmailAction)
+    SearchButton.pack()
+    SearchButton.place(x=330,y=65)
+
+def GmailAction(): #지메일 상호작용
+    # global value
+    # host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
+    #port = "587"
+    #htmlFileName = "logo.html"
+    #senderAddr = "@gmail.com"   # 보내는 사람 email 주소.
+    #recipientAddr = "@naver.com"  # 받는 사람 email 주소.
+    #msg = MIMEBase("multipart", "alternative")
+    #msg['Subject'] = "병원 정보 스크랩"
+    #msg['From'] = senderAddr
+    #msg['To'] = recipientAddr
+
+    #htmlFD = open(htmlFileName, 'rb')
+    #HtmlPart = MIMEText(htmlFD.read(), 'html', _charset='UTF-8')
+    #htmlFD.close()
+    #msg.attach(HtmlPart)
+
+    #s = mysmtplib.MySMTP(host, port)
+    #s.ehlo()
+    #s.starttls()
+    #s.ehlo()
+    #s.login("@gmail.com","") #아이디 비번
+    #s.sendmail(senderAddr, [recipientAddr], msg.as_string())
+    #s.close()
+    pass
+
+def InitRenderListText(): #병원 리스트 틀
+    global RenderText
+    RenderTextScrollbar = Scrollbar(g_Tk) #스크롤바
+    RenderTextScrollbar.place(x=300,y=200)
+    TempFont = font.Font(g_Tk,size=10,family='Consolas')
+    #리스트박스
+    RenderText = Text(g_Tk,width=53,height=8,borderwidth=2,relief='ridge',yscrollcommand=RenderTextScrollbar.set)
+    RenderText.place(x=10,y=350)
+    RenderTextScrollbar.config(command=RenderText.yview)
+    RenderTextScrollbar.pack(side=RIGHT,fill=BOTH)
+    RenderText.configure(state='disabled')
+
 g_Tk = Tk()
 g_Tk.geometry("420x630+750+200") #tk크기
 DataList=[]
@@ -72,4 +116,6 @@ InitInputCityLabel()
 InitInputDistrictLabel()
 InitInputTownLabel()
 InitSearchButton()
+InitGmailButton()
+InitRenderListText()
 g_Tk.mainloop()
