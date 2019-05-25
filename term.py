@@ -1,7 +1,9 @@
 import urllib
+import folium
 import http.client
 from tkinter import *
 from tkinter import font
+
 import tkinter.messagebox
 # -*- encoding: cp949 -*-
 
@@ -94,10 +96,10 @@ def GmailAction(): #지메일 상호작용
     #s.close()
     pass
 
-def InitMap(): #지도 어떻게 띄우지
-    map_osm = folium.Map(location=[37.568477, 126.981611], zoom_start=13)
+def InitMap(): #지도
+    map_osm = folium.Map(location=[37.568477, 126.981611], zoom_start=20)
     folium.Marker([37.568477, 126.981611], popup='Mt. Hood Meadows').add_to(map_osm)
-    map_osm.place(x=10, y=100)
+    map_osm.save('osm.html')
 
 def InitRenderListText(): #병원 리스트 틀
     global RenderText
@@ -129,4 +131,5 @@ InitSearchButton()
 InitGmailButton()
 InitRenderListText()
 InitGraphList()
+InitMap()
 g_Tk.mainloop()
