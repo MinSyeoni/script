@@ -12,6 +12,10 @@ import mimetypes
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 
+from io import BytesIO
+import urllib.request
+from PIL import Image,ImageTk
+
 #conn = http.client.HTTPConnection("apis.data.go.kr")
 #conn.request("GET","/B551182/hospAsmRstInfoService/getGnhpSprmAsmRstList?serviceKey=yOJok8JvEqZFYgyzzt59glVlJ1EbfIxYgT5vEz5O%2BqxdhWM%2FhKAuV9knUxKBNWEIS4IOnD%2Fpmxb%2B2lqBShuzJQ%3D%3D")
 #req = conn.getresponse()
@@ -101,6 +105,17 @@ def InitMap(): #지도
     folium.Marker([37.568477, 126.981611], popup='Mt. Hood Meadows').add_to(map_osm)
     map_osm.save('osm.html')
 
+def InitImage(): #이거 왜 안나오냐
+    url = "http://tong.visitkorea.or.kr/cms/resource/74/2396274_image2_1.JPG"
+    with urllib.request.urlopen(url) as u:
+        raw_data = u.read()
+    im = Image.open(BytesIO(raw_data))
+    image = ImageTk.PhotoImage(im)
+
+    label = Label(g_Tk, image=image, height=100, width=100)
+    label.pack()
+    label.place(x=10, y=120)
+
 def InitRenderListText(): #병원 리스트 틀
     global RenderText
     RenderTextScrollbar = Scrollbar(g_Tk) #스크롤바
@@ -130,6 +145,7 @@ InitInputTownLabel()
 InitSearchButton()
 InitGmailButton()
 InitRenderListText()
+InitImage()
 InitGraphList()
 InitMap()
 g_Tk.mainloop()
