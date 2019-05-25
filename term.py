@@ -10,12 +10,11 @@ import mimetypes
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 
-
-import urllib
-import http.client
-from tkinter import *
-from tkinter import font
-import tkinter.messagebox
+#conn = http.client.HTTPConnection("apis.data.go.kr")
+#conn.request("GET","/B551182/hospAsmRstInfoService/getGnhpSprmAsmRstList?serviceKey=yOJok8JvEqZFYgyzzt59glVlJ1EbfIxYgT5vEz5O%2BqxdhWM%2FhKAuV9knUxKBNWEIS4IOnD%2Fpmxb%2B2lqBShuzJQ%3D%3D")
+#req = conn.getresponse()
+#print(req.status,req.reason)
+#print(req.read().decode('utf-8'))
 
 def InitTopText():
     TempFont = font.Font(g_Tk,size=17,weight='bold',family='Consolas')
@@ -95,6 +94,11 @@ def GmailAction(): #지메일 상호작용
     #s.close()
     pass
 
+def InitMap(): #지도 어떻게 띄우지
+    map_osm = folium.Map(location=[37.568477, 126.981611], zoom_start=13)
+    folium.Marker([37.568477, 126.981611], popup='Mt. Hood Meadows').add_to(map_osm)
+    map_osm.place(x=10, y=100)
+
 def InitRenderListText(): #병원 리스트 틀
     global RenderText
     RenderTextScrollbar = Scrollbar(g_Tk) #스크롤바
@@ -107,6 +111,12 @@ def InitRenderListText(): #병원 리스트 틀
     RenderTextScrollbar.pack(side=RIGHT,fill=BOTH)
     RenderText.configure(state='disabled')
 
+def InitGraphList(): #그래프
+    global canvas, numbers
+    canvas = Canvas(g_Tk,width=375,height=100,bg='white')
+    canvas.place(x=10,y=500)
+    numbers = [x for x in range(1, 21)]
+
 g_Tk = Tk()
 g_Tk.geometry("420x630+750+200") #tk크기
 DataList=[]
@@ -118,4 +128,5 @@ InitInputTownLabel()
 InitSearchButton()
 InitGmailButton()
 InitRenderListText()
+InitGraphList()
 g_Tk.mainloop()
