@@ -22,20 +22,18 @@ import urllib.request
 import urllib.parse
 #from PIL import Image,ImageTk
 
-
-
 class Hospital:
     def __init__(self):
         self.g_Tk = Tk()
         self.g_Tk.geometry("420x630+750+200")
         self.InitTopText()
         self.InitInputCityLabel()
-        self.InitInputDistrictLabel()
         self.InitInputTownLabel()
         self.InitSearchButton()
         self.InitSearchButton2()
         self.InitGmailButton()
         self.InitRenderListText()
+        self.InitGraphButton()
         self.g_Tk.mainloop()
         self.initVariable()
         self.setXML()
@@ -81,19 +79,15 @@ class Hospital:
         self.searchFont = font.Font(self.g_Tk, size=11,family='Consolas')
         self.MainText = Label(self.g_Tk,font = self.TempFont,text="< 병원정보서비스 App >")
         self.cityText = Label(self.g_Tk,font = self.searchFont,text="시/도")
-        self.districtText = Label(self.g_Tk, font=self.searchFont, text="구/군")
         self.townText = Label(self.g_Tk, font=self.searchFont, text="이름")
-        self.mapText = Label(self.g_Tk, font=self.searchFont, text="[ 병원 지도 ]")
         self.listText = Label(self.g_Tk, font=self.searchFont, text="[ 병원 리스트 ]")
         self.graphText = Label(self.g_Tk, font=self.searchFont, text="[ 지역별 병원 그래프 ]")
         #글자들 위치
         self.MainText.place(x=90)
         self.cityText.place(x=30,y=40)
-        self.districtText.place(x=120,y=40)
-        self.townText.place(x=200,y=40)
-        self.mapText.place(x=10,y=100)
-        self.listText.place(x=10,y=320)
-        self.graphText.place(x=10,y=470)
+        self.townText.place(x=170,y=40)
+        self.listText.place(x=10,y=105)
+        self.graphText.place(x=10,y=350)
 
     def InitInputCityLabel(self): #시도 입력창
         self.TempFont = font.Font(self.g_Tk,size=15,family='Consolas')
@@ -116,31 +110,24 @@ class Hospital:
         self.previousButton.pack()
         self.previousButton.place(x=20, y=105)
 
-    def InitInputDistrictLabel(self): #구군 입력창 #구현하려면 가능한데 UI수정필요해서 버립시다.
-        self.TempFont = font.Font(self.g_Tk,size=15,family='Consolas')
-
-        self.InputLabel = Entry(self.g_Tk,font=self.TempFont,width=7,borderwidth=2,relief='ridge')
-        self.InputLabel.place(x=100,y=65)
-
     def InitInputTownLabel(self): #이름 검색라벨로 변경
         self.TempFont = font.Font(self.g_Tk,size=15,family='Consolas')
         self.nameEntry=StringVar()
         self.InputLabel = Entry(self.g_Tk, textvariable=self.nameEntry, font=self.TempFont,width=7,borderwidth=2,relief='ridge')
         self.InputLabel.pack()
-        self.InputLabel.place(x=190,y=65)
+        self.InputLabel.place(x=150,y=65)
 
-    def InitSearchButton(self): #검색 버튼
+    def InitSearchButton(self): #시/도검색 버튼
         self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
-        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="시",command=self.setArea)
+        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="검색",command=self.setArea)
         self.SearchButton.pack()
-        self.SearchButton.place(x=280,y=65)
+        self.SearchButton.place(x=100,y=65)
 
     def InitSearchButton2(self): #이름검색 위치변경 필요
         self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
-        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="이름",command=self.setName)
+        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="검색",command=self.setName)
         self.SearchButton.pack()
-        self.SearchButton.place(x=280,y=105)
-
+        self.SearchButton.place(x=240,y=65)
 
     def InitGmailButton(self): #지메일 버튼
         self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
@@ -148,56 +135,14 @@ class Hospital:
         self.SearchButton.pack()
         self.SearchButton.place(x=330,y=65)
 
-    #def GmailAction(): #지메일 상호작용
-        # global value
-        # host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
-        #port = "587"
-        #htmlFileName = "logo.html"
-        #senderAddr = "@gmail.com"   # 보내는 사람 email 주소.
-        #recipientAddr = "@naver.com"  # 받는 사람 email 주소.
-        #msg = MIMEBase("multipart", "alternative")
-        #msg['Subject'] = "병원 정보 스크랩"
-        #msg['From'] = senderAddr
-        #msg['To'] = recipientAddr
-
-        #htmlFD = open(htmlFileName, 'rb')
-        #HtmlPart = MIMEText(htmlFD.read(), 'html', _charset='UTF-8')
-        #htmlFD.close()
-        #msg.attach(HtmlPart)
-
-        #s = mysmtplib.MySMTP(host, port)
-        #s.ehlo()
-        #s.starttls()
-        #s.ehlo()
-        #s.login("@gmail.com","") #아이디 비번
-        #s.sendmail(senderAddr, [recipientAddr], msg.as_string())
-        #s.close()
-        #pass
-
-    #def InitMap(): #지도
-       # map_osm = folium.Map(location=[37.568477, 126.981611], zoom_start=20)
-       # folium.Marker([37.568477, 126.981611], popup='Mt. Hood Meadows').add_to(map_osm)
-        #map_osm.save('osm.html')
-
-    #def InitImage(): #이거 왜 안나오냐
-     #   url = "http://tong.visitkorea.or.kr/cms/resource/74/2396274_image2_1.JPG"
-      #  with urllib.request.urlopen(url) as u:
-       #     raw_data = u.read()
-        #im = Image.open(BytesIO(raw_data))
-        #image = ImageTk.PhotoImage(im)
-
-        #label = Label(g_Tk, image=image, height=100, width=100)
-        #label.pack()
-        #label.place(x=10, y=120)
-
     def InitRenderListText(self): #병원 리스트 틀
         global RenderText
         self.RenderTextScrollbar = Scrollbar(self.g_Tk) #스크롤바
         self.RenderTextScrollbar.place(x=300,y=200)
         TempFont = font.Font(self.g_Tk,size=10,family='Consolas')
         #리스트박스
-        self.RenderText = Text(self.g_Tk,width=53,height=8,borderwidth=2,relief='ridge',yscrollcommand=self.RenderTextScrollbar.set)
-        self.RenderText.place(x=10,y=350)
+        self.RenderText = Text(self.g_Tk,width=53,height=16,borderwidth=2,relief='ridge',yscrollcommand=self.RenderTextScrollbar.set)
+        self.RenderText.place(x=10,y=130)
         self.RenderTextScrollbar.config(command=self.RenderText.yview)
         self.RenderTextScrollbar.pack(side=RIGHT,fill=BOTH)
         self.RenderText.configure(state='disabled')
@@ -206,6 +151,12 @@ class Hospital:
         self.canvas = Canvas(self.g_Tk,width=375,height=100,bg='white')
         self.canvas.place(x=10,y=500)
         self.numbers = [x for x in range(1, 21)]
+
+    def InitGraphButton(self): #그래프 생성 버튼
+        self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
+        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="생성",command=self.setArea)
+        self.SearchButton.pack()
+        self.SearchButton.place(x=160,y=350)
 
     #데이터 값 지정
     def setXML(self): #시도,이름 검색 시 xmlset
