@@ -3,6 +3,7 @@ import urllib
 import http.client
 from tkinter import *
 from tkinter import font
+import tkinter.messagebox
 from xml.etree.ElementTree import parse
 import xml.etree.ElementTree as ET
 #import matplotlib.pyplot as plt
@@ -210,6 +211,7 @@ class Hospital:
     #    for body in self.root.iter("body"):
      #       self.tmp = body.findtext("totalCount")
       #      return self.tmp
+
     def setNext(self):
         if self.onText:
             self.page += 1
@@ -263,6 +265,7 @@ class Hospital:
         self.s.login("py6646@gmail.com","py122134tkddn!")  # 로긴을 합니다.
         self.s.sendmail(self.senderAddr, [self.recipientAddr], self.msg.as_string())
         self.s.close()
+        tkinter.messagebox.showinfo("g-mail","전송완료!")
 
     def printAll(self): #검색에 따른 xml 출력
         self.onText = TRUE
