@@ -33,6 +33,8 @@ class Hospital:
         self.InitSearchButton2()
         self.InitGmailButton()
         self.InitRenderListText()
+        self.nextButton()
+        self.backButton()
         self.InitGraphButton()
         self.g_Tk.mainloop()
         self.initVariable()
@@ -86,8 +88,8 @@ class Hospital:
         self.MainText.place(x=90)
         self.cityText.place(x=30,y=40)
         self.townText.place(x=170,y=40)
-        self.listText.place(x=10,y=105)
-        self.graphText.place(x=10,y=350)
+        self.listText.place(x=35,y=115)
+        self.graphText.place(x=10,y=370)
 
     def InitInputCityLabel(self): #시도 입력창
         self.TempFont = font.Font(self.g_Tk,size=15,family='Consolas')
@@ -98,10 +100,16 @@ class Hospital:
         self.InputLabel.place(x=10,y=65)
 
     def nextButton(self):
-        self.tempFont = font.Font(self.g_Tk, size=12, family='Consolas')
+        self.tempFont = font.Font(self.g_Tk, size=10, family='Consolas')
         self.nextButton = Button(self.g_Tk, font=self.tempFont,  text=">", command=self.setNext)
         self.nextButton.pack()
-        self.nextButton.place(x=10, y=95)
+        self.nextButton.place(x=150, y=115)
+
+    def backButton(self):
+        self.tempFont = font.Font(self.g_Tk, size=10, family='Consolas')
+        self.nextButton = Button(self.g_Tk, font=self.tempFont,  text="<", command=self.setBack)
+        self.nextButton.pack()
+        self.nextButton.place(x=10, y=115)
 
     def previousButton(self):
         self.tempFont = font.Font(self.g_Tk, size=12,  family='Consolas')
@@ -137,15 +145,17 @@ class Hospital:
 
     def InitRenderListText(self): #병원 리스트 틀
         global RenderText
-        self.RenderTextScrollbar = Scrollbar(self.g_Tk) #스크롤바
-        self.RenderTextScrollbar.place(x=300,y=200)
-        TempFont = font.Font(self.g_Tk,size=10,family='Consolas')
+        self.frame = Frame(self.g_Tk)
+        self.frame.place(x=10,y=145)
+        self.RenderTextScrollbar = Scrollbar(self.frame) #스크롤바
+        self.RenderTextScrollbar.pack(side=RIGHT,fill=Y)
+        #TempFont = font.Font(self.g_Tk,size=10,family='Consolas')
         #리스트박스
-        self.RenderText = Text(self.g_Tk,width=53,height=16,borderwidth=2,relief='ridge',yscrollcommand=self.RenderTextScrollbar.set)
-        self.RenderText.place(x=10,y=130)
+        self.RenderText = Text(self.frame,width=53,height=16,borderwidth=2,relief='ridge',yscrollcommand=self.RenderTextScrollbar.set)
+        self.RenderText.pack()
         self.RenderTextScrollbar.config(command=self.RenderText.yview)
-        self.RenderTextScrollbar.pack(side=RIGHT,fill=BOTH)
-        self.RenderText.configure(state='disabled')
+        #self.RenderTextScrollbar.pack(side=RIGHT,fill=BOTH)
+        #self.RenderText.configure(state='disabled')
 
     def InitGraphList(self): #그래프
         self.canvas = Canvas(self.g_Tk,width=375,height=100,bg='white')
@@ -156,7 +166,7 @@ class Hospital:
         self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
         self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="생성",command=self.setArea)
         self.SearchButton.pack()
-        self.SearchButton.place(x=160,y=350)
+        self.SearchButton.place(x=160,y=365)
 
     #데이터 값 지정
     def setXML(self): #시도,이름 검색 시 xmlset
@@ -203,6 +213,12 @@ class Hospital:
     def setNext(self):
         if self.onText:
             self.page += 1
+            self.setXML()
+            self.printAll()
+
+    def setBack(self):
+        if self.onText:
+            self.page -= 1
             self.setXML()
             self.printAll()
 
@@ -253,7 +269,7 @@ class Hospital:
         self.RenderText.configure(state="normal")
         self.RenderText.delete(0.0, END)
         for item in self.root.iter("item"):
-            self.RenderText.insert(INSERT,"[",INSERT,item.findtext("dutyDivNam"),INSERT,"]",INSERT,item.findtext("dutyAddr"))
+            self.RenderText.insert(INSERT,"\n[",INSERT,item.findtext("dutyDivNam"),INSERT,"]",INSERT,item.findtext("dutyAddr"))
             self.RenderText.insert(INSERT, chr(10))
             self.RenderText.insert(INSERT, "병원 이름: ",INSERT,item.findtext("dutyName"),INSERT)
             self.RenderText.insert(INSERT, chr(10))
