@@ -1,16 +1,20 @@
 import urllib
-#import folium
 import http.client
 from tkinter import *
 from tkinter import font
 import tkinter.messagebox
 from xml.etree.ElementTree import parse
 import xml.etree.ElementTree as ET
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt #그래프
+import numpy as np   #그래프
+import matplotlib.font_manager as fm
 import mimetypes
 import smtplib
+import smtplib, os, pickle  # smtplib: 메일 전송을 위한 패키지
+from email import encoders  # 파일전송을 할 때 이미지나 문서 동영상 등의 파일을 문자열로 변환할 때 사용할 패키지
+from email.mime.text import MIMEText   # 본문내용을 전송할 때 사용되는 모듈
+from email.mime.multipart import MIMEMultipart   # 메시지를 보낼 때 메시지에 대한 모듈
 from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
 from http.client import HTTPSConnection
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import tkinter.messagebox
@@ -21,28 +25,10 @@ from email.mime.text import MIMEText
 from io import BytesIO
 import urllib.request
 import urllib.parse
-#from PIL import Image,ImageTk
 
-class Hospital:
+
+class HospitalCount:
     def __init__(self):
-        self.g_Tk = Tk()
-        self.g_Tk.geometry("420x630+750+200")
-        self.InitTopText()
-        self.InitInputCityLabel()
-        self.InitInputTownLabel()
-        self.InitSearchButton()
-        self.InitSearchButton2()
-        self.InitGmailButton()
-        self.InitRenderListText()
-        self.nextButton()
-        self.backButton()
-        self.InitGraphButton()
-        self.g_Tk.mainloop()
-        self.initVariable()
-        self.setXML()
-        self.sendMain()
-
-        #그래프
         self.tmp = 0
         self.seoulCount = self.getCount("서울특별시")
         self.gyeongGiCount = self.getCount("경기도")
@@ -62,8 +48,8 @@ class Hospital:
         self.jejuCount = self.getCount("제주특별자치도")
         self.sejongCount = self.getCount("세종특별자치시")
 
-        self.member = ['Seoul', 'GyeongGi', 'Busan', 'Gyeongam', 'Daegu', 'Incheon', 'Gyeongbuk', 'Chungnam', 'Jeonbuk',
-                       'Jeonnam', 'Daejeon', 'Gwangju', 'Gangwon ', 'Chungbuk', 'Ulsan', 'Jeju', 'Sejong']
+        self.member = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+                       'J', 'K', 'L', 'M ', 'N', 'O', 'P', 'Q']
         self.count = [self.seoulCount, self.gyeongGiCount, self.busanCount, self.gyeongNamCount, self.daeguCount,
                       self.incheonCount, self.gyeongBukCount, self.chungNamCount, self.jeonBukCount,
                       self.jeonNamCount, self.daejeonCount, self.gwangjuCount, self.gangWonCount, self.chungBukCount,
@@ -71,11 +57,68 @@ class Hospital:
         self.member.reverse()
         self.count.reverse()
 
+    def setXML(self, area):
+        self.url = "http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire?serviceKey=9Y0EzZk6MfXyi1eqXZje8fT1ff5xBnYcTohB2nMJOEWdUAM7cASbKYdJjW1ZjOaZ5ddX1fSFG%2BPKHc16GrmaOw%3D%3D" \
+                 + "&Q0=" + urllib.parse.quote_plus(area)+ "&pageNo=1&numOfRows=10"
+        self.tree = ET.ElementTree(file=urllib.request.urlopen(self.url))
+        self.tree.write("DATA_Q.xml", encoding="utf-8")
+        self.data = self.tree.getroot()
+
+        self.doc = parse("DATA_Q.xml")
+        self.root = self.doc.getroot()
+
+    def renderRoundGraph(self):
+        plt.pie(self.count,
+                labels=self.member,
+                shadow=False,
+                explode=(0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                startangle=90,
+                autopct='%1.1f%%')
+        plt.title('National Pharmacy Distribution Plot')
+        plt.show()
+    def renderStickGraph(self):
+        plt.bar(self.member, self.count)
+
+        plt.title('Total number of hospitals')
+        plt.show()
+
+    def getCount(self, area):
+        self.setXML(area)
+        for body in self.root.iter("body"):
+            self.tmp = body.findtext("totalCount")
+            return self.tmp
+HospitalCount()
+
+class Hospital:
+    def __init__(self):
+        self.g_Tk = Tk()
+        self.g_Tk.geometry("420x630+750+200")
+        self.InitTopText()
+
+        self.initVariable()
+        self.setXML()
+        self.initInterface()
+        self.sendMain()
+
+
+        self.g_Tk.mainloop()
     def initVariable(self):
         self.page = 1
         self.name = ""
         self.area = ""
         self.onText = FALSE
+        self.areaCount = HospitalCount()
+
+    def initInterface(self):
+        self.InitInputCityLabel()
+        self.InitInputTownLabel()
+        self.InitSearchButton()
+        self.InitSearchButton2()
+        self.InitGmailButton()
+        self.nextButton()
+        self.backButton()
+        self.GraphButton()
+        self.InitRenderListText()
 
     def InitTopText(self):
         self.TempFont = font.Font(self.g_Tk,size=17,weight='bold',family='Consolas')
@@ -95,7 +138,6 @@ class Hospital:
     def InitInputCityLabel(self): #시도 입력창
         self.TempFont = font.Font(self.g_Tk,size=15,family='Consolas')
         self.areaEntry=StringVar()
-        print("아")
         self.InputLabel = Entry(self.g_Tk,textvariable=self.areaEntry,font=self.TempFont,width=7,borderwidth=2,relief='ridge')
         self.InputLabel.pack()
         self.InputLabel.place(x=10,y=65)
@@ -111,6 +153,12 @@ class Hospital:
         self.nextButton = Button(self.g_Tk, font=self.tempFont,  text="<", command=self.setBack)
         self.nextButton.pack()
         self.nextButton.place(x=10, y=115)
+
+    def GraphButton(self): #그래프 생성 버튼
+        self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
+        self.renderStickGraphButton = Button(self.g_Tk,font=self.TempFont,text="그래프 생성",command=self.areaCount.renderStickGraph)
+        self.renderStickGraphButton.pack()
+        self.renderStickGraphButton.place(x=160,y=365)
 
     def previousButton(self):
         self.tempFont = font.Font(self.g_Tk, size=12,  family='Consolas')
@@ -140,7 +188,7 @@ class Hospital:
 
     def InitGmailButton(self): #지메일 버튼
         self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
-        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="G-mail",command=self.sendMain)
+        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="G-mail",command=self.sendMain(self,self.setArea(),self.setName()))
         self.SearchButton.pack()
         self.SearchButton.place(x=330,y=65)
 
@@ -158,60 +206,18 @@ class Hospital:
         #self.RenderTextScrollbar.pack(side=RIGHT,fill=BOTH)
         #self.RenderText.configure(state='disabled')
 
-    def InitGraphList(self): #그래프
-        self.canvas = Canvas(self.g_Tk,width=375,height=100,bg='white')
-        self.canvas.place(x=10,y=500)
-        self.numbers = [x for x in range(1, 21)]
 
-    def InitGraphButton(self): #그래프 생성 버튼
-        self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
-        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="생성",command=self.setArea)
-        self.SearchButton.pack()
-        self.SearchButton.place(x=160,y=365)
+
 
     #데이터 값 지정
     def setXML(self): #시도,이름 검색 시 xmlset
         self.url="http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire?serviceKey=9Y0EzZk6MfXyi1eqXZje8fT1ff5xBnYcTohB2nMJOEWdUAM7cASbKYdJjW1ZjOaZ5ddX1fSFG%2BPKHc16GrmaOw%3D%3D" \
                  + "&Q0=" + urllib.parse.quote_plus(self.area) + "&QN=" + urllib.parse.quote_plus(self.name) + "&pageNo=" + str(self.page) + "&numOfRows=10"
-        print(urllib.parse.quote_plus(self.area))
         self.tree = ET.ElementTree(file=urllib.request.urlopen(self.url))
         self.tree.write("DATA_Q.xml",encoding="utf-8")
         self.data=self.tree.getroot()
         self.doc=parse("DATA_Q.xml")
-        print(self.url)
         self.root=self.doc.getroot()
-
-    def setXML_Graph(self, area):#그래프 형성용 XMLset
-        self.url = "http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire?serviceKey=9Y0EzZk6MfXyi1eqXZje8fT1ff5xBnYcTohB2nMJOEWdUAM7cASbKYdJjW1ZjOaZ5ddX1fSFG%2BPKHc16GrmaOw%3D%3D" \
-                   + "&Q0=" + urllib.parse.quote_plus(area) + "&numOfRows=10"
-        self.tree = ET.ElementTree(file=urllib.request.urlopen(self.url))
-        self.tree.write("DATA_Q.xml", encoding="utf-8")
-        self.data = self.tree.getroot()
-
-        self.doc = parse("DATA_Q.xml")
-        self.root = self.doc.getroot()
-
-   # def renderRoundGraph(self):
-    #    plt.pie(self.count,
-     #           labels=self.member,
-      #          shadow=False,
-       #         explode=(0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-        #        startangle=90,
-         #       autopct='%1.1f%%')
-       # plt.title('National Pharmacy Distribution Plot')
-        #plt.show()
-    #def renderStickGraph(self):
-     #   plt.bar(self.member, self.count)
-
-#        plt.title('National Pharmacy Distribution Plot')
- #       plt.show()
-
-  #  def getCount(self, area):
-   #     self.setXML(area)
-    #    for body in self.root.iter("body"):
-     #       self.tmp = body.findtext("totalCount")
-      #      return self.tmp
-
     def setNext(self):
         if self.onText:
             self.page += 1
@@ -235,37 +241,55 @@ class Hospital:
         self.area = self.areaEntry.get()
         self.setXML()
         self.printAll()
-
+        return self.area
     def setName(self):
         self.page=1
         self.name=self.nameEntry.get()
         self.area=""
         self.setXML()
         self.printAll()
-    def sendMain(self): #메일보내기
+        return self.name
+
+
+    def sendMain(self,area,name): #메일보내기
+        print("아")
+        self.url = "http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire?serviceKey=9Y0EzZk6MfXyi1eqXZje8fT1ff5xBnYcTohB2nMJOEWdUAM7cASbKYdJjW1ZjOaZ5ddX1fSFG%2BPKHc16GrmaOw%3D%3D" \
+                   + "&Q0=" + urllib.parse.quote_plus(area) + "&QN=" + urllib.parse.quote_plus(
+            name) + "&pageNo=" + str(self.page) + "&numOfRows=10"
+        self.tree = ET.ElementTree(file=urllib.request.urlopen(self.url))
+        self.tree.write("DATA_Q.xml", encoding="utf-8")
+        self.data = self.tree.getroot()
+        self.doc = parse("DATA_Q.xml")
+        self.root = self.doc.getroot()
+
         self.host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
         self.port = "587"
-        self.html = self.setXML()
-        self.msg = MIMEMultipart('alternative')
-        self.recipientAddr = "py6646@naver.com"  # 보내는 사람 email 주소.
-        self.senderAddr = "py6646@gmail.com"  # 받는 사람 email 주소.
+        htmlFileName = "logo.html"
+        self.area = self.areaEntry.get()
+        self.name = self.nameEntry.get()
 
-        #self.msg['Subject'] =
+        self.senderAddr = "py6646@naver.com"  # 보내는 사람 email 주소.
+        self.recipientAddr = "py6646@gmail.com"  # 받는 사람 email 주소.
+        self.html=self.name
+        self.msg = MIMEMultipart('alternative')
+        self.msg['Subject'] = "병원리스트 입니다"
         self.msg['From'] = self.senderAddr
         self.msg['To'] = self.recipientAddr
-        self.msgPart = MIMEText('Y', 'plain')
-        self.bookPart = MIMEText(self.html, 'html', _charset='UTF-8')
+        self.part=MIMEText('SMTP로 보내진 병원리스트 본문 메시지입니다')
+        self.msg.attach(self.part)
+        self.part_html=MIMEText(self.html,'html',_charset='UTF-8')
+        self.msg.attach(self.part_html)
 
-        self.msg.attach(self.msgPart)
-        self.msg.attach(self.bookPart)
+        # 메일을 발송한다.
         self.s = smtplib.SMTP(self.host, self.port)
+        # s.set_debuglevel(1)        # 디버깅이 필요할 경우 주석을 푼다.
         self.s.ehlo()
         self.s.starttls()
         self.s.ehlo()
-        self.s.login("py6646@gmail.com","py122134tkddn!")  # 로긴을 합니다.
+        self.s.login("py6646@gmail.com", "py122134tkddn!")
         self.s.sendmail(self.senderAddr, [self.recipientAddr], self.msg.as_string())
         self.s.close()
-        tkinter.messagebox.showinfo("g-mail","전송완료!")
+        #tkinter.messagebox.showinfo("g-mail","전송완료!")
 
     def printAll(self): #검색에 따른 xml 출력
         self.onText = TRUE
@@ -277,8 +301,5 @@ class Hospital:
             self.RenderText.insert(INSERT, "병원 이름: ",INSERT,item.findtext("dutyName"),INSERT)
             self.RenderText.insert(INSERT, chr(10))
         self.RenderText.configure(state="disabled")
-#InitImage()
-#InitGraphList()
-#InitMap()
 
 Hospital()
