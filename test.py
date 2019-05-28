@@ -1,53 +1,118 @@
-from tkinter import *
+from tkinter import*
+import random
 
-class Horse:
-    def horseFinder(self):
-        pass
-
-    def gmail(self):
-        pass
-
-    def racecourse(self):
-        pass
-
+class Samok:
     def __init__(self):
         window = Tk()
-        window.title("경마 정보 및 성적 조회")
-        self.width = 300
-        self.height = 100
-
-        frame1 = Frame(window) # 경마 검색 및 지메일
+        self.turn =True
+        self.imageList = [PhotoImage(file='circle.gif'),PhotoImage(file='cross.gif'),PhotoImage(file='empty.gif')]
+        self.buttonList = []
+        frame1=Frame(window)
         frame1.pack()
-        Label(frame1,text="경마 종류 입력").pack(side=LEFT)
-        e=Entry(frame1,text='')
-        e.pack(side=LEFT)
-        Button(frame1,text="검색",command=self.horseFinder).pack(side=LEFT)
-        Button(frame1,text="G-MAIL",command=self.gmail).pack(side=LEFT)
+        for r in range(6):
+            for c in range(7):
+                self.buttonList.append(Button(frame1,text=' ',image=self.imageList[2],
+                                              command=lambda Row=r,Col=c: self.pressed(Row,Col)))
+                self.buttonList[-1].grid(row=r,column=c)
 
-        Label(frame1, text="   ").pack(side=LEFT)
-        Label(frame1, text="경마장 검색").pack(side=LEFT)
-        e = Entry(frame1, text='')
-        e.pack(side=LEFT)
-        Button(frame1, text="검색", command=self.racecourse).pack(side=LEFT)
-
-        frame2 = Frame(window) # 경마 목록
+        frame2=Frame(window)
         frame2.pack()
-        scrollbar = Scrollbar(frame2)
-        scrollbar.pack(side=RIGHT, fill=Y)
-        text = Text(frame2, width=40, height=10, wrap=WORD, yscrollcommand=scrollbar.set)
-        text.pack()
-        scrollbar.config(command=text.yview)
+        self.button = Button(frame2,text="다시생성",command=self.again)
+        self.button.pack()
 
-        frame3 = Frame(window)  # 성적 배당 그래프
-        frame3.pack()
-        Label(frame3, text="경마 성적 및 배당률 그래프").pack(side=LEFT)
-
-        self.canvas = Canvas(window, width=self.width, height=self.height, bg='white')
-        self.canvas.pack()
-
-        frame4 = Frame(window)  # 성적 배당 그래프
-        frame4.pack(side=RIGHT)
+        self.winButtons=[]
 
         window.mainloop()
 
-Horse()
+    def again(self):
+        for i in range(6*7):
+            self.buttonList[i].configure(image=self.imageList[2],text=' ')
+            self.winButtons=[]
+        self.turn = True
+
+    def pressed(self,Row,Col):
+        for r in range(5,-1,-1):
+            if self.buttonList[r*7+Col]["text"] == ' ':
+                if self.turn:   # O 차례
+                    self.buttonList[r*7+Col].configure(image=self.imageList[0],text='O')
+                else:           # X 차례
+                    self.buttonList[r*7+Col].configure(image=self.imageList[1],text='X')
+                self.turn = not self.turn
+                break
+        self.check()
+    def check(self):
+        #행
+        for r in range(6):
+            for c in range(3):
+                if 'O' == self.buttonList[r*7+c]["text"] == self.buttonList[r*7+c+1]["text"] == \
+                    self.buttonList[r*7+c+2]["text"] == self.buttonList[r*7+c+3]["text"]:
+                    self.button.configure(text="O 이김")
+                    self.winButtons=[self.buttonList[r*7+c],self.buttonList[r*7+c+1],self.buttonList[r*7+c+2],self.buttonList[r*7+c+3]]
+                elif 'X' == self.buttonList[r*7+c]["text"] == self.buttonList[r*7+c+1]["text"] == \
+                    self.buttonList[r*7+c+2]["text"] == self.buttonList[r*7+c+3]["text"]:
+                    self.button.configure(text="X 이김")
+                    self.winButtons=[self.buttonList[r*7+c],self.buttonList[r*7+c+1],self.buttonList[r*7+c+2],self.buttonList[r*7+c+3]]
+        #열
+        for c in range(7):
+            for r in range(3):
+                if 'O' == self.buttonList[r*7+c]["text"] == self.buttonList[(r+1)*7+c]["text"] == \
+                    self.buttonList[(r+2)*7+c]["text"] == self.buttonList[(r+3)*7+c]["text"]:
+                    self.button.configure(text="O 이김")
+                    self.winButtons=[self.buttonList[r*7+c],self.buttonList[(r+1)*7+c],self.buttonList[(r+2)*7+c],self.buttonList[(r+3)*7+c]]
+                elif 'X' == self.buttonList[r * 7 + c]["text"] == self.buttonList[(r + 1) * 7 + c]["text"] == \
+                    self.buttonList[(r + 2) * 7 + c]["text"] == self.buttonList[(r + 3) * 7 + c]["text"]:
+                    self.button.configure(text="X 이김")
+                    self.winButtons=[self.buttonList[r*7+c],self.buttonList[(r+1)*7+c],self.buttonList[(r+2)*7+c],self.buttonList[(r+3)*7+c]]
+
+        # 위/
+        for i in range(3):
+            for j in range(i+1):
+                for k in range(3,-1,-1):
+                    if 'O' == self.buttonList[j*7+k+i]["text"] ==self.buttonList[(j+1)*7 +(k+i-1)]["text"] ==\
+                    self.buttonList[(j+2)*7+(k+i-2)]["text"] == self.buttonList[(j+3)*7+(k+i-3)]["text"]:
+                        self.button.configure(text="O 이김")
+                        self.winButtons = [self.buttonList[j*7+k+i], self.buttonList[(j+1)*7 +(k+i-1)], self.buttonList[(j+2)*7+(k+i-2)], self.buttonList[(j+3)*7+(k+i-3)]]
+                    elif 'X' == self.buttonList[j*7+k+i]["text"] ==self.buttonList[(j+1)*7 +(k+i-1)]["text"] ==\
+                    self.buttonList[(j+2)*7+(k+i-2)]["text"] == self.buttonList[(j+3)*7+(k+i-3)]["text"]:
+                        self.button.configure(text="X 이김")
+                        self.winButtons = [self.buttonList[j*7+k+i], self.buttonList[(j+1)*7 +(k+i-1)], self.buttonList[(j+2)*7+(k+i-2)], self.buttonList[(j+3)*7+(k+i-3)]]
+
+        # 밑/
+        for i in range(3):
+            for j in range(2-i,-1,-1):
+                for k in range(3):
+                    if 'O' == self.buttonList[j*7+(6-k-i)]["text"] == self.buttonList[(j+1)*7+(6-k-i-1)]["text"] ==\
+                    self.buttonList[(j+2)*7+(6-k-i-2)]["text"] == self.buttonList[(j+3)*7+(6-k-i-3)]["text"]:
+                        self.button.configure(text="O 이김")
+                        self.winButtons = [self.buttonList[j*7+(6-k-i)],self.buttonList[(j+1)*7+(6-k-i-1)],self.buttonList[(j+2)*7+(6-k-i-2)],self.buttonList[(j+3)*7+(6-k-i-3)]]
+                    elif 'X' == self.buttonList[j*7+(6-k-i)]["text"] == self.buttonList[(j+1)*7+(6-k-i-1)]["text"] ==\
+                    self.buttonList[(j+2)*7+(6-k-i-2)]["text"] == self.buttonList[(j+3)*7+(6-k-i-3)]["text"]:
+                        self.button.configure(text="X 이김")
+                        self.winButtons = [self.buttonList[j*7+(6-k-i)],self.buttonList[(j+1)*7+(6-k-i-1)],self.buttonList[(j+2)*7+(6-k-i-2)],self.buttonList[(j+3)*7+(6-k-i-3)]]
+        # 밑\
+        for i in range(3,6):
+            for j in range(5-i,-1,-1):
+                for k in range(3):
+                    if 'O' == self.buttonList[j*7 +k+(i-3)]["text"] ==self.buttonList[(j+1)*7+k+(i-3)+1]["text"]==\
+                    self.buttonList[(j+2)*7+k+(i-3)+2]["text"] ==self.buttonList[(j+3)*7+k+(i-3)+3]["text"]:
+                        self.button.configure(text="O 이김")
+                        self.winButtons = [self.buttonList[j*7 +k+(i-3)],self.buttonList[(j+1)*7+k+(i-3)+1],self.buttonList[(j+2)*7+k+(i-3)+2],self.buttonList[(j+3)*7+k+(i-3)+3]]
+                    elif 'X' == self.buttonList[j*7 +k+(i-3)]["text"] ==self.buttonList[(j+1)*7+k+(i-3)+1]["text"]==\
+                    self.buttonList[(j+2)*7+k+(i-3)+2]["text"] ==self.buttonList[(j+3)*7+k+(i-3)+3]["text"]:
+                        self.button.configure(text="X 이김")
+                        self.winButtons = [self.buttonList[j*7 +k+(i-3)],self.buttonList[(j+1)*7+k+(i-3)+1],self.buttonList[(j+2)*7+k+(i-3)+2],self.buttonList[(j+3)*7+k+(i-3)+3]]
+
+        # 위\
+        for i in range(3,0,-1):
+            for j in range(-i+4):
+                for k in range(3):
+                    if 'O' ==self.buttonList[j*7+k+(-i+3)]["text"] ==self.buttonList[(j+1)*7+k+(-i+3)+1]["text"]==\
+                    self.buttonList[(j+2)*7+k+(-i+3)+2]["text"]==self.buttonList[(j+3)*7+k+(-i+3)+3]["text"]:
+                        self.button.configure(text="O 이김")
+                        self.winButtons = [self.buttonList[j*7+k+(-i+3)],self.buttonList[(j+1)*7+k+(-i+3)+1],self.buttonList[(j+2)*7+k+(-i+3)+2],self.buttonList[(j+3)*7+k+(-i+3)+3]]
+                    elif 'X' ==self.buttonList[j*7+k+(-i+3)]["text"] ==self.buttonList[(j+1)*7+k+(-i+3)+1]["text"]==\
+                    self.buttonList[(j+2)*7+k+(-i+3)+2]["text"]==self.buttonList[(j+3)*7+k+(-i+3)+3]["text"]:
+                        self.button.configure(text="X 이김")
+                        self.winButtons = [self.buttonList[j*7+k+(-i+3)],self.buttonList[(j+1)*7+k+(-i+3)+1],self.buttonList[(j+2)*7+k+(-i+3)+2],self.buttonList[(+3)*7+k+(-i+3)+3]]
+
+Samok()
