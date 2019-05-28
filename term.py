@@ -245,22 +245,19 @@ class Hospital:
     def sendMain(self): #메일보내기
         self.host = "smtp.gmail.com"  # Gmail STMP 서버 주소.
         self.port = "587"
+        self.html = self.setXML()
+        self.msg = MIMEMultipart('alternative')
         self.recipientAddr = "py6646@naver.com"  # 보내는 사람 email 주소.
         self.senderAddr = "py6646@gmail.com"  # 받는 사람 email 주소.
-        self.htmlFileName = "logo.html"
-        self.html = self.setXML()
-        self.msg = MIMEMultipart("multipart","alternative")
-        self.msg['Subject'] = "병원 리스트 목록"
+
+        #self.msg['Subject'] =
         self.msg['From'] = self.senderAddr
         self.msg['To'] = self.recipientAddr
-
-        #self.htmlFD = open(self.htmlFileName, 'rb')
         self.msgPart = MIMEText('Y', 'plain')
         self.bookPart = MIMEText(self.html, 'html', _charset='UTF-8')
 
         self.msg.attach(self.msgPart)
         self.msg.attach(self.bookPart)
-
         self.s = smtplib.SMTP(self.host, self.port)
         self.s.ehlo()
         self.s.starttls()
