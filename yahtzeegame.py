@@ -1,9 +1,9 @@
 from tkinter import *
 from tkinter import font
 import tkinter.messagebox
-from player import *
-from dice import *
-from configuration import *
+from player import Player
+from dice import Dice
+from configuration import Configuration
 
 class YahtzeeBoard:
     UPPERTOTAL = 6 #UpperScore 범주 인덱스
@@ -50,14 +50,14 @@ class YahtzeeBoard:
         self.initInterface()  # Yahtzee 보드판 플레이어 명수 만큼 생성
 
     def initInterface(self):  # Yahtzee 보드 윈도우 생성
-        self.window = 싸('Yahtzee Game')
+        self.window=Tk('Yahtzee Game')
         self.window.geometry('1600x800')
-        self.TempFont = font.Font(size=16, weight=＇bold＇, family =＇Consolas＇)
-        for I in range(5):  # Dice 객체 5개 생성
+        self.TempFont = font.Font(size=16, weight="bold", family ="Consolas")
+        for i in range(5):  # Dice 객체 5개 생성
             self.dice.append(Dice())
-        self.rollDice = Button(self.window, text=＂Roll Dice＂, font = self.TempFont, command = self.rollDiceListener) # Roll Dice 버튼
+        self.rollDice = Button(self.window, text="Roll Dice", font = self.TempFont, command = self.rollDiceListener) # Roll Dice 버튼
         self.rollDice.grid(row=0, column=0)
-        for I in range(5):  # dice 버튼 5개 생성
+        for i in range(5):  # dice 버튼 5개 생성
             self.diceButtons.append(Button(self.window, text="?",  font = self.TempFont, width = 8, command = lambda row=i: self.diceListener(row)))
             # 각각의 dice 버튼에 대한 이벤트 처리 diceListener 연결
             # 람다 함수를 이용하여 diceListener 매개변수 설정하면 하나의 Listener로 해결
@@ -89,7 +89,7 @@ class YahtzeeBoard:
     def rollDiceListener(self):  # rollDiceListener
         for i in range(5):
             if (self.diceButtons[i]['state'] != 'disabled'):
-            self.dice[i].rollDie()
+                self.dice[i].rollDie()
             self.diceButtons[i].configure(text=str(self.dice[i].getRoll()))
         if (self.roll == 0 or self.roll == 1):
             self.roll += 1
@@ -98,7 +98,7 @@ class YahtzeeBoard:
         elif (self.roll == 2):
             self.bottomLabel.configure(text="카테고리를 선택하세요")
             self.rollDice['state'] = 'disabled'
-            self.rollDice['bg'] = 'light gray‘
+            self.rollDice['bg'] = 'light gray'
 
     def diceListener(self, row):  # DiceListener
         self.diceButtons[row]['state'] = 'disabled'
@@ -139,3 +139,5 @@ class YahtzeeBoard:
         if (self.round == 13):
             ...
         # 다시 Roll Dice 과 diceButtons 버튼 활성화, bottomLabel 초기화
+
+YahtzeeBoard()

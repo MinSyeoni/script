@@ -16,7 +16,7 @@ class Configuration:
         if (row>=0 and row<=6):
             return Configuration.scoreUpper(d,row+1)
         elif (row==8):
-        . . .
+            pass
 
     def scoreUpper(d, num): # 정적 메소드: 객체생성 없이 사용 가능
     #Upper Section 구성 (Ones, Twos, Threes, ...)에 대해 주사위 점수를 매 깁니다. 예를 들어,
