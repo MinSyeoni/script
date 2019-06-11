@@ -16,12 +16,24 @@ class Configuration:
         if (row>=0 and row<=6):
             return Configuration.scoreUpper(d,row+1)
         elif (row==8):
-            pass
+            return Configuration.scoreFullHouse(d)
 
     def scoreUpper(d, num): # 정적 메소드: 객체생성 없이 사용 가능
     #Upper Section 구성 (Ones, Twos, Threes, ...)에 대해 주사위 점수를 매 깁니다. 예를 들어,
     # num이 1이면 "Ones"구성의 주사위 점수를 반환합니다.
-        pass
+        if num == 1:
+            pass
+        elif num == 2:
+            pass
+        elif num == 3:
+            pass
+        elif num == 4:
+            pass
+        elif num == 5:
+            pass
+        elif num == 6:
+            pass
+
     def scoreThreeOfAKind(d):
         pass
     def scoreFourOfAKind(d):
