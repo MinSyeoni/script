@@ -30,18 +30,18 @@ import urllib.parse
 
 #페이지 수정필요
 
-
 class Hospital:
     def __init__(self):
         self.g_Tk = Tk()
         self.g_Tk.geometry("1000x700+850+500")
+        self.image = PhotoImage(file = "background.png") #배경이미지
+        self.label = Label(self.g_Tk,image = self.image)
+        self.label.pack()
 
         self.InitTopText()
         self.initVariable()
         self.setXML()
         self.initInterface()
-
-
 
         self.g_Tk.mainloop()
     def initVariable(self):
@@ -69,44 +69,49 @@ class Hospital:
 
     def InitTopText(self):
         self.TempFont = font.Font(self.g_Tk,size=17,weight='bold',family='Consolas')
-        self.searchFont = font.Font(self.g_Tk, size=11,family='Consolas')
-        self.MainText = Label(self.g_Tk,font = self.TempFont,text="< 병원정보서비스 App >")
-        #self.cityText = Label(self.g_Tk,font = self.searchFont,text="시/도")
-        #self.townText = Label(self.g_Tk, font=self.searchFont, text="이름")
+        self.searchFont = font.Font(self.g_Tk, size=14,family='Consolas')
+        self.search2Font = font.Font(self.g_Tk, size=12, family='Consolas')
+        #self.MainText = Label(self.g_Tk,font = self.TempFont,text="< 병원정보서비스 App >")
+        self.typeText = Label(self.g_Tk, font=self.search2Font, text="종류 선택")
+        self.cityText = Label(self.g_Tk,font = self.search2Font,text="시/도 입력")
+        self.townText = Label(self.g_Tk, font=self.search2Font, text="이름 입력")
+        self.searchText = Label(self.g_Tk, font=self.search2Font, text="click!")
         self.listText = Label(self.g_Tk, font=self.searchFont, text="[ 병원 리스트 ]")
         self.graphText = Label(self.g_Tk, font=self.searchFont, text="[ 지역별 병원 그래프 ]")
         #글자들 위치
-        self.MainText.place(x=90)
-        #self.cityText.place(x=30,y=40)
-        #self.townText.place(x=170,y=40)
-        self.listText.place(x=35,y=115)
-        self.graphText.place(x=10,y=370)
+        #self.MainText.place(x=90)
+        self.typeText.place(x=70, y=290)
+        self.cityText.place(x=195,y=290)
+        self.townText.place(x=295,y=290)
+        self.searchText.place(x=385, y=290)
+        self.listText.place(x=75,y=400)
+        self.graphText.place(x=630,y=400)
 
     def InitInputCityLabel(self):  # 같은 도내 병원타입 검색을 위한 시도 입력창
-        self.TempFont = font.Font(self.g_Tk,size=15,family='Consolas')
+        self.TempFont = font.Font(self.g_Tk,size=16,family='Consolas')
         self.areaEntry=StringVar()
         self.InputLabel = Entry(self.g_Tk,textvariable=self.areaEntry,font=self.TempFont,width=7,borderwidth=2,relief='ridge')
         self.InputLabel.pack()
-        self.InputLabel.place(x=10,y=65)
+        self.InputLabel.place(x=190,y=330)
 
     def InitInputnameLabel(self):#지도 검색을 위한 이름입력창
-        self.TempFont = font.Font(self.g_Tk,size=15,family='Consolas')
+        self.TempFont = font.Font(self.g_Tk,size=16,family='Consolas')
         self.nameEntry=StringVar()
         self.InputLabel = Entry(self.g_Tk,textvariable=self.nameEntry,font=self.TempFont,width=7,borderwidth=2,relief='ridge')
         self.InputLabel.pack()
-        self.InputLabel.place(x=100,y=65)
+        self.InputLabel.place(x=285,y=330)
 
     def nextButton(self):
         self.tempFont = font.Font(self.g_Tk, size=10, family='Consolas')
         self.nextButton = Button(self.g_Tk, font=self.tempFont,  text=">", command=self.setNext)
         self.nextButton.pack()
-        self.nextButton.place(x=150, y=115)
+        self.nextButton.place(x=205, y=400)
 
     def backButton(self):
         self.tempFont = font.Font(self.g_Tk, size=10, family='Consolas')
         self.nextButton = Button(self.g_Tk, font=self.tempFont,  text="<", command=self.setBack)
         self.nextButton.pack()
-        self.nextButton.place(x=10, y=115)
+        self.nextButton.place(x=50, y=400)
 
     #def GraphButton(self): #그래프 생성 버튼
     #    self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
@@ -125,24 +130,28 @@ class Hospital:
 
     def InitSearchButton2(self): # 검색버튼
         self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
-        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="검색",command=self.SearchButtonAction)
+        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="",command=self.SearchButtonAction)
         self.SearchButton.pack()
-        self.SearchButton.place(x=400,y=65)
+        self.buttonImage = PhotoImage(file = "search.png")
+        self.SearchButton.config(image=self.buttonImage,compound=RIGHT)
+        self.SearchButton.place(x=400,y=325)
 
     def InitSearchButton(self): # 지도버튼
         self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
-        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="지도",command=self.map)
+        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text=" 지도 ",command=self.map)
         self.SearchButton.pack()
-        self.SearchButton.place(x=300,y=65)
+        self.mapImage = PhotoImage(file = "map.png")
+        self.SearchButton.config(image=self.mapImage,compound=RIGHT)
+        self.SearchButton.place(x=235,y=395)
 
     def SearchListBox(self):
-        self.TempFont = font.Font(self.g_Tk, size=17, weight='bold', family='Consolas')
+        self.TempFont = font.Font(self.g_Tk, size=14, family='Consolas') # weight='bold' 삭제
         self.ListboxScrollbar=Scrollbar(self.g_Tk)
         self.ListboxScrollbar.pack()
-        self.ListboxScrollbar.place(x=150,y=50)
+        self.ListboxScrollbar.place(x=155,y=320)
 
         self.SearchBox=Listbox(self.g_Tk,font=self.TempFont,activestyle='none',
-                                width=20,height=2,borderwidth=12,relief='ridge',
+                                width=10,height=2,borderwidth=2,relief='ridge',
                                 yscrollcommand=self.ListboxScrollbar.set)
         self.SearchBox.insert(0, "    ")
         self.SearchBox.insert(1,"병원")
@@ -158,7 +167,7 @@ class Hospital:
         self.SearchBox.insert(11, "    ")
         self.typeEntry = self.SearchBox.activate(1)
         self.SearchBox.pack()
-        self.SearchBox.place(x=600,y=100)
+        self.SearchBox.place(x=50,y=320)
         self.ListboxScrollbar.config(command=self.SearchBox.yview)
 
     def SearchButtonAction(self):
@@ -255,16 +264,17 @@ class Hospital:
         self.setXML()
         self.printAll()
 
-
     def InitGmailButton(self): #지메일 버튼
         self.TempFont = font.Font(self.g_Tk, size=11,family='Consolas')
-        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text="G-mail",command=self.sendMain)
+        self.SearchButton = Button(self.g_Tk,font=self.TempFont,text=" G-mail ",command=self.sendMain)
         self.SearchButton.pack()
-        self.SearchButton.place(x=330,y=65)
+        self.gmailImage = PhotoImage(file = "gmail.png")
+        self.SearchButton.config(image=self.gmailImage,compound=RIGHT)
+        self.SearchButton.place(x=330,y=395)
 
     def InitRenderListText(self): #병원 리스트 틀
         self.frame = Frame(self.g_Tk)
-        self.frame.place(x=10,y=145)
+        self.frame.place(x=50,y=450)
         self.RenderTextScrollbar = Scrollbar(self.frame) #스크롤바
         self.RenderTextScrollbar.pack(side=RIGHT,fill=Y)
         #TempFont = font.Font(self.g_Tk,size=10,family='Consolas')
@@ -274,9 +284,6 @@ class Hospital:
         self.RenderTextScrollbar.config(command=self.RenderText.yview)
         #self.RenderTextScrollbar.pack(side=RIGHT,fill=BOTH)
         #self.RenderText.configure(state='disabled')
-
-
-
 
     #데이터 값 지정
     def setXML(self): #시도,이름 검색 시 xmlset
@@ -292,18 +299,18 @@ class Hospital:
         self.root=self.doc.getroot()
         print(self.root)
 
-
     def setNext(self):
         self.page += 1
         self.setXML()
         self.printAll()
-        print("아")
+        print("다음")
+
     def setBack(self):
         self.page -= 1
         self.setXML()
         self.printAll()
         print()
-        print("아")
+        print("이전")
 
     def sendMain(self):#추후 이메일 내용 추가
         self.name = self.nameEntry.get()
@@ -367,8 +374,6 @@ class Hospital:
 
         self.doc = parse("DATA_Q.xml")
         self.root = self.doc.getroot()
-
-
 
     def printAll(self): #검색에 따른 xml 출력
 
