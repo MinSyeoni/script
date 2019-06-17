@@ -21,9 +21,7 @@ bot = telepot.Bot(TOKEN)
 def getData(area, type):
     res_list = []
     url = baseurl+'&Q0='+area+'&QZ='+ type + "&pageNo=" + '1' + "&numOfRows=10" #페이지바꿔야함
-    #print(url)
     res_body = urlopen(url).read()
-    #print(res_body)
     soup = BeautifulSoup(res_body, 'html.parser')
     items = soup.findAll('item')
     for item in items:
@@ -62,7 +60,6 @@ def run(date_param, param='11710'):
             try:
                 cursor.execute('INSERT INTO logs (user,log) VALUES ("%s", "%s")'%(user,r))
             except sqlite3.IntegrityError:
-                # 이미 해당 데이터가 있다는 것을 의미합니다.
                 pass
             else:
                 print( str(datetime.now()).split('.')[0], r )

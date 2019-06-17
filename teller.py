@@ -34,10 +34,6 @@ type_list = {
     '종합병원' : 'R'
     }
 
-
-def initApiData(): # ?
-    items.clear()
-
 def replyAptData(user, type, area):
     noti.sendMessage(user, '병원 정보 로딩중입니다')
 
@@ -60,37 +56,6 @@ def replyAptData(user, type, area):
     else:
         noti.sendMessage( user, '%s 해당하는 병원정보가 없습니다.'%type )
 
-#def save( user, loc_param ):
-    #    conn = sqlite3.connect('users.db')
-    #cursor = conn.cursor()
-    #cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, location TEXT, PRIMARY KEY(user, location) )')
-    #try:
-    #   cursor.execute('INSERT INTO users(user, location) VALUES ("%s", "%s")' % (user, loc_param))
-    #except sqlite3.IntegrityError:
-        #   noti.sendMessage( user, '이미 해당 정보가 저장되어 있습니다.' )
-        #return
-        #else:
-        #noti.sendMessage( user, '저장되었습니다.' )
-        #conn.commit()
-
-#def check( user ):
-    #   conn = sqlite3.connect('users.db')
-    #cursor = conn.cursor()
-    #cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, location TEXT, PRIMARY KEY(user, location) )')
-    #cursor.execute('SELECT * from users WHERE user="%s"' % user)
-    #for data in cursor.fetchall():
-        #    row = 'id:' + str(data[0]) + ', location:' + data[1]
-        #noti.sendMessage( user, row )
-
-#def printList(user,key): #???????????
-#    msg = ''
-#    for d in type[key].keys():
-#        msg += d + '\n'
-#    if msg:
-#        noti.sendMessage(user, msg)
-#    else:
-#        noti.sendMessage(user, '해당하는 데이터가 없습니다.')
-
 def handle(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     if content_type != 'text':
@@ -111,8 +76,7 @@ def handle(msg):
         noti.sendMessage(chat_id, '< 스크립트언어 >\n병원 정보 조회 서비스 챗봇입니다\n명령어 : 도움말 / 병원종류')
     else:
         noti.sendMessage(chat_id, '올바른 검색 방법을 사용해주세요')
-        noti.sendMessage(chat_id, '검색 병원종류 지역\nex)검색 요양병원 경기도시흥시\n--------------------------\n명령어 : 도움말 / 병원종류')
-
+        noti.sendMessage(chat_id, '검색 병원종류 지역\nex)검색 요양병원 경기도시흥시\n-----------------------------------\n명령어 : 도움말 / 병원종류')
 
 today = date.today()
 current_month = today.strftime('%Y%m')
