@@ -24,7 +24,7 @@ import tkinter.messagebox
 import mimetypes
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-#import spam
+import spam
 
 from io import BytesIO
 import urllib.request
@@ -465,9 +465,9 @@ class Hospital:
         for item in self.root.iter("item"):
             self.RenderText.insert(INSERT, "\n[", INSERT, item.findtext("dutyDivNam"), INSERT, "]", INSERT,
                                    item.findtext("dutyAddr"))
-            self.RenderText.insert(INSERT, chr(10))
+            self.RenderText.insert(INSERT, chr(spam.strlen('hospitallist')))
             self.RenderText.insert(INSERT, "병원 이름: ", INSERT, item.findtext("dutyName"), INSERT)
-            self.RenderText.insert(INSERT, chr(10))
+            self.RenderText.insert(INSERT, chr(spam.strlen('hospitallist')))
         self.RenderText.configure(state="disabled")
 
     #def clean(self):
