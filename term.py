@@ -28,6 +28,8 @@ from io import BytesIO
 import urllib.request
 import urllib.parse
 
+import spam
+
 #페이지 수정필요
 
 class Hospital:
@@ -52,8 +54,6 @@ class Hospital:
         self.x=0
         self.y=0
         self.onText = FALSE
-
-
 
     def initInterface(self):
         self.InitInputCityLabel()
@@ -172,7 +172,7 @@ class Hospital:
 
     def SearchButtonAction(self):
 
-        self.graphview()
+#        self.graphview()
 
         self.iSearchIndex = self.SearchBox.curselection()[0]
         if self.iSearchIndex == 0:
@@ -303,7 +303,7 @@ class Hospital:
         self.page += 1
         self.setXML()
         self.printAll()
-        print("다음")
+        #spam.print('next')
 
     def setBack(self):
         self.page -= 1
@@ -346,7 +346,7 @@ class Hospital:
         self.s.login("py6646@gmail.com", "py122134tkddn!")
         self.s.sendmail(self.senderAddr, [self.recipientAddr], self.msg.as_string())
         self.s.close()
-        #tkinter.messagebox.showinfo("g-mail","전송완료!")
+        tkinter.messagebox.showinfo("g-mail","전송완료!")
 
     def map(self):
         self.name=self.nameEntry.get()
@@ -380,9 +380,9 @@ class Hospital:
         self.RenderText.delete(0.0, END)
         for item in self.root.iter("item"):
             self.RenderText.insert(INSERT,"\n[",INSERT,item.findtext("dutyDivNam"),INSERT,"]",INSERT,item.findtext("dutyAddr"))
-            self.RenderText.insert(INSERT, chr(10))
+            self.RenderText.insert(INSERT, chr(spam.strlen('hospitallist')))
             self.RenderText.insert(INSERT, "병원 이름: ",INSERT,item.findtext("dutyName"),INSERT)
-            self.RenderText.insert(INSERT, chr(10))
+            self.RenderText.insert(INSERT, chr(spam.strlen('ishospitallist')))
         self.RenderText.configure(state="disabled")
 
 
