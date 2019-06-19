@@ -171,8 +171,9 @@ class Hospital:
         self.ListboxScrollbar.config(command=self.SearchBox.yview)
 
     def SearchButtonAction(self):
-        self.RenderText.configure(state="normal")
-        self.RenderText.delete(0.0, END)
+
+        self.graphview()
+
         self.iSearchIndex = self.SearchBox.curselection()[0]
         if self.iSearchIndex == 0:
             self.SearchListBox()
@@ -198,7 +199,6 @@ class Hospital:
             self.SearchHospital10()
         elif self.iSearchIndex == 11:
             self.SearchListBox()
-        self.RenderText.configure(state="disabled")
 
     def SearchHospital1(self):
         self.type="B"
@@ -376,12 +376,14 @@ class Hospital:
         self.root = self.doc.getroot()
 
     def printAll(self): #검색에 따른 xml 출력
-
+        self.RenderText.configure(state="normal")
+        self.RenderText.delete(0.0, END)
         for item in self.root.iter("item"):
             self.RenderText.insert(INSERT,"\n[",INSERT,item.findtext("dutyDivNam"),INSERT,"]",INSERT,item.findtext("dutyAddr"))
             self.RenderText.insert(INSERT, chr(10))
             self.RenderText.insert(INSERT, "병원 이름: ",INSERT,item.findtext("dutyName"),INSERT)
             self.RenderText.insert(INSERT, chr(10))
+        self.RenderText.configure(state="disabled")
 
 
 
